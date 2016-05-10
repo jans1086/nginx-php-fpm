@@ -68,6 +68,12 @@ RUN chmod 755 /usr/bin/pull && chmod 755 /usr/bin/push
 # Supervisor Config
 ADD conf/supervisord.conf /etc/supervisord.conf
 
+
+
+# php.ini 
+RUN rm -f /etc/php5/fpm/php.ini
+ADD conf/php.ini /etc/php5/fpm/
+
 # Start Supervisord
 ADD scripts/start.sh /start.sh
 RUN chmod 755 /start.sh
