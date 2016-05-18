@@ -17,7 +17,7 @@ nginx=stable && \
 add-apt-repository ppa:nginx/$nginx && \
 apt-get update && \
 apt-get upgrade -y && \
-BUILD_PACKAGES="curl supervisor nginx php5-fpm git php5-mysql php-apc php5-curl php5-gd php5-intl php5-mcrypt php5-memcache php5-sqlite php5-tidy php5-xmlrpc php5-xsl php5-pgsql php5-mongo php5-ldap pwgen php5-redis" && \
+BUILD_PACKAGES="curl libcurl3 libcurl3-dev php5-curl supervisor nginx php5-fpm git php5-mysql php-apc php5-curl php5-gd php5-intl php5-mcrypt php5-memcache php5-sqlite php5-tidy php5-xmlrpc php5-xsl php5-pgsql php5-mongo php5-ldap pwgen php5-redis" && \
 apt-get -y install $BUILD_PACKAGES && \
 apt-get remove --purge -y software-properties-common && \
 apt-get autoremove -y && \
@@ -53,8 +53,8 @@ find /etc/php5/cli/conf.d/ -name "*.ini" -exec sed -i -re 's/^(\s*)#(.*)/\1;\2/g
 # mycrypt conf
 RUN php5enmod mcrypt
 
-
-RUN curl -sS https://getcomposer.org/installer | php && /usr/bin/php composer.phar && mv composer.phar /usr/local/bin/composer
+ADD scripts/installer /tmp/installer
+RUN cd /tmp && php installer && /usr/bin/php composer.phar && mv composer.phar /usr/local/bin/composer
 
 
 # nginx site conf
@@ -62,6 +62,7 @@ RUN rm -Rf /etc/nginx/conf.d/* && \
 rm -Rf /etc/nginx/sites-available/default && \
 mkdir -p /etc/nginx/ssl/
 ADD conf/nginx-site.conf /etc/nginx/sites-available/default.conf
+RUN cp -ar conf/sites-enabled/* /etc/nginx/sites-enabled/
 RUN ln -s /etc/nginx/sites-available/default.conf /etc/nginx/sites-enabled/default.conf
 
 # Add git commands to allow container updating
