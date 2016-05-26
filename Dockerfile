@@ -62,7 +62,8 @@ RUN rm -Rf /etc/nginx/conf.d/* && \
 rm -Rf /etc/nginx/sites-available/default && \
 mkdir -p /etc/nginx/ssl/
 ADD conf/nginx-site.conf /etc/nginx/sites-available/default.conf
-RUN cp -ar conf/sites-enabled/* /etc/nginx/sites-enabled/
+ADD conf /tmp/conf
+RUN cp -ar /tmp/conf/sites-enabled/* /etc/nginx/sites-enabled/
 RUN ln -s /etc/nginx/sites-available/default.conf /etc/nginx/sites-enabled/default.conf
 
 # Add git commands to allow container updating
